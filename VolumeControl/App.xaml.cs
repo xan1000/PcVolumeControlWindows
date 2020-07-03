@@ -53,7 +53,8 @@ namespace VolumeControl
         private readonly JsonSerializerSettings m_jsonsettings = new JsonSerializerSettings
         {
             NullValueHandling = NullValueHandling.Ignore,
-            MissingMemberHandling = MissingMemberHandling.Ignore
+            MissingMemberHandling = MissingMemberHandling.Ignore,
+            Converters = new JsonConverter[] { new FloatFormatConverter() }
         };
 
         private readonly Subject<bool> m_updateSubject = new Subject<bool>();
