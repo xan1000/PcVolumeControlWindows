@@ -403,8 +403,8 @@ namespace VolumeControl
                         {
                             //Console.WriteLine("Updated default audio device: " + audioUpdate.defaultDevice.deviceId);
 
-                            newDefaultAudioDevice.SetAsDefault();
-                            newDefaultAudioDevice.SetAsDefaultCommunications();
+                            newDefaultAudioDevice.SetAsDefaultAsync().Wait();
+                            newDefaultAudioDevice.SetAsDefaultCommunicationsAsync().Wait();
 
                             return false;
                         }
