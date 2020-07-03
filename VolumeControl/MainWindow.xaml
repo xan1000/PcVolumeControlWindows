@@ -3,31 +3,58 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:VolumeControl"
         mc:Ignorable="d"
         Title="PcVolumeControl"
-        Height="197.413"
+        Height="200"
         Width="525"
         Icon="Resources/WindowIcon.bmp"
         WindowStyle="ThreeDBorderWindow">
-    <Window.Effect>
-        <DropShadowEffect/>
-    </Window.Effect>
-    <Grid>
-        <TextBox x:Name="server_port" Height="23" Margin="148,47,249,0" TextWrapping="Wrap" Text="3000" VerticalAlignment="Top"/>
-        <Label Content="Your IP Address" HorizontalAlignment="Right" Margin="0,12,413,0" VerticalAlignment="Top"/>
-        <Label x:Name="server_ip" Content="192.168.1.100" HorizontalAlignment="Right" Margin="0,43,369,0" VerticalAlignment="Top" Width="137"/>
-        <Label Content="Port" HorizontalAlignment="Left" Margin="148,12,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="start_button" Content="Start" Margin="193,92,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="75" Click="start_button_Click"/>
-        <Label x:Name="server_status" Content="Offline" Margin="0,21,20,0" HorizontalAlignment="Right" Width="69" Height="26" VerticalAlignment="Top" FontWeight="Bold"/>
-        <Button x:Name="stop_button" Content="Stop" HorizontalAlignment="Left" Margin="289,92,0,0" VerticalAlignment="Top" Width="75" Click="stop_button_Click"/>
-        <Button x:Name="exit_button" Content="Exit" HorizontalAlignment="Left" Margin="422,92,0,0" VerticalAlignment="Top" Width="75" Click="exit_button_Click"/>
-        <Label x:Name="version_view_protocol" Content="V" Margin="0,0,0,18" HorizontalAlignment="Left" Width="167" Height="26" VerticalAlignment="Bottom"/>
-        <Label x:Name="version_view_app" Content="V" Margin="0,0,0,44" HorizontalAlignment="Left" Width="167" Height="26" VerticalAlignment="Bottom"/>
-        <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left">
-            <Hyperlink RequestNavigate="DownloadLatest_RequestNavigate" NavigateUri="https://github.com/PcVolumeControl/PcVolumeControlWindows/releases/latest">Download latest Version</Hyperlink>
-        </TextBlock>
-        <Button x:Name="start_boot_button" Content="Start On Boot" Margin="415,134,10.4,0" VerticalAlignment="Top" Click="start_boot_Click"/>
-        <Button x:Name="stop_boot_button" Content="Remove On Boot" Margin="284,134,116.4,0" VerticalAlignment="Top" Click="stop_boot_Click"/>
+  <Window.Effect>
+    <DropShadowEffect/>
+  </Window.Effect>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="30"/>
+      <RowDefinition Height="30"/>
+      <RowDefinition Height="60"/>
+      <RowDefinition Height="30"/>
+    </Grid.RowDefinitions>
+
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+
+
+    <Label Grid.Row="0" Grid.Column="0" Content="Your IP Address" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5"/>
+    <Label Grid.Row="1" Grid.Column="0" x:Name="server_ip" Content="192.168.1.100" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5"/>
+
+
+    <Label Grid.Row="0" Grid.Column="1" Content="Port" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5"/>
+    <TextBox Grid.Row="1" Grid.Column="1" x:Name="server_port" TextWrapping="Wrap" Text="3000" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5"/>
+
+    <Label Grid.Row="0" Grid.Column="3" x:Name="server_status" Content="Offline" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5"  FontWeight="Bold"/>
+
+    <Grid Grid.Row="2" Grid.Column="0">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      <Label Grid.Row="0" x:Name="version_view_protocol" Content="V" HorizontalAlignment="Left"  />
+      <Label Grid.Row="1" x:Name="version_view_app" Content="V" HorizontalAlignment="Left"  />
     </Grid>
+
+
+    <Button Grid.Row="2" Grid.Column="1" x:Name="start_button" Content="Start" Click="start_button_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" />
+    <Button Grid.Row="2" Grid.Column="2" x:Name="stop_button" Content="Stop" Click="stop_button_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" />
+    <Button Grid.Row="2" Grid.Column="3" Content="Exit" Click="exit_button_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" />
+
+    <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="5">
+      <Hyperlink RequestNavigate="DownloadLatest_RequestNavigate" NavigateUri="https://github.com/PcVolumeControl/PcVolumeControlWindows/releases/latest">Download latest Version</Hyperlink>
+    </TextBlock>
+    <Button Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" Content="Start On Boot" Click="start_boot_Click"/>
+    <Button Grid.Row="3" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" Content="Remove On Boot"  Click="stop_boot_Click"/>
+  </Grid>
 </Window>

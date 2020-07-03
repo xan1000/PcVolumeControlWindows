@@ -1,20 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading;
 using System.Windows;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Net.Sockets;
-using System.Net;
-using AudioSwitcher.AudioApi.CoreAudio;
-using AudioSwitcher.AudioApi;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Windows.Navigation;
-using AudioSwitcher.AudioApi.Session;
 
 namespace VolumeControl
 {
+    // ReSharper disable once RedundantExtendsListEntry
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -24,13 +15,11 @@ namespace VolumeControl
             version_view_protocol.Content = "protocol v" + App.PROTOCOL_VERSION;
             version_view_app.Content = "application " + App.APPLICATION_VERSION;
 
-            string ipAddress = App.GetLocalIPAddress();
+            var ipAddress = App.GetLocalIPAddress();
             server_ip.Content = ipAddress;
-            Console.WriteLine("ipAddress: " + ipAddress);
+            //Console.WriteLine("ipAddress: " + ipAddress);
 
             updateConnectionStatus();
-
-            PcVolumeControlUtils.checkVersion();
         }
 
         private void DownloadLatest_RequestNavigate(object sender, RequestNavigateEventArgs e)
@@ -41,7 +30,7 @@ namespace VolumeControl
 
         public void updateConnectionStatus()
         {
-            App app = App.instance;
+            var app = App.instance;
 
             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -74,7 +63,7 @@ namespace VolumeControl
 
         private void exit_button_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Application.Current.Shutdown();
+            Application.Current.Shutdown();
         }
 
         private void start_boot_Click(object sender, RoutedEventArgs e)

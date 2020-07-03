@@ -11,17 +11,16 @@ namespace VolumeControl
 {
     public class Server
     {
-        private ClientListener m_clientListener;
-        private TcpListener m_tcpListener;
-        private Thread listenThread;
-        private List<TcpClient> m_clients = new List<TcpClient>();
-        private bool m_running = false;
-        private ASCIIEncoding m_encoder = new ASCIIEncoding();
+        private readonly ClientListener m_clientListener;
+        private readonly TcpListener m_tcpListener;
+        private readonly List<TcpClient> m_clients = new List<TcpClient>();
+        private bool m_running;
+        private readonly ASCIIEncoding m_encoder = new ASCIIEncoding();
 
         public Server(ClientListener clientListener)
         {
             m_tcpListener = new TcpListener(IPAddress.Any, 3000);
-            listenThread = new Thread(new ThreadStart(ListenForClients));
+            var listenThread = new Thread(ListenForClients);
             listenThread.Start();
             m_clientListener = clientListener;
         }
@@ -41,27 +40,23 @@ namespace VolumeControl
             {
                 foreach (var client in m_clients)
                 {
-                    Console.WriteLine("Closing client connection...");
+                    //Console.WriteLine("Closing client connection...");
 
                     try
                     {
                         client.Close();
                     }
-                    catch (IOException e)
-                    {
-
-                    }
-                    catch (ObjectDisposedException e)
-                    {
-
-                    }
+                    catch (IOException)
+                    { }
+                    catch (ObjectDisposedException)
+                    { }
                 }
             }
         }
 
         private void ListenForClients()
         {
-            this.m_tcpListener.Start();
+            m_tcpListener.Start();
 
             m_running = true;
             m_clientListener.onServerStart();
@@ -71,14 +66,14 @@ namespace VolumeControl
                 //blocks until a client has connected to the server
                 try
                 {
-                    TcpClient client = m_tcpListener.AcceptTcpClient();
-                    Console.WriteLine("connection accepted");
+                    var client = m_tcpListener.AcceptTcpClient();
+                    //Console.WriteLine("connection accepted");
                     //create a thread to handle communication 
                     //with connected client
-                    Thread clientThread = new Thread(new ParameterizedThreadStart(HandleClientComm));
+                    var clientThread = new Thread(HandleClientComm);
                     clientThread.Start(client);
                 }
-                catch(SocketException e)
+                catch(SocketException)
                 {
 
                 }
@@ -90,9 +85,9 @@ namespace VolumeControl
 
         private void HandleClientComm(object client)
         {
-            Console.WriteLine("Client connected");
+            //Console.WriteLine("Client connected");
 
-            TcpClient tcpClient = (TcpClient)client;
+            var tcpClient = (TcpClient)client;
             lock (this)
             {
                 m_clients.Add(tcpClient);
@@ -102,7 +97,7 @@ namespace VolumeControl
 
             try
             {
-                NetworkStream clientStream = tcpClient.GetStream();
+                var clientStream = tcpClient.GetStream();
                 var bufferedStream = new BufferedStream(clientStream);
                 var streamReader = new StreamReader(bufferedStream);
 
@@ -124,24 +119,21 @@ namespace VolumeControl
                     // End of message
                     if (message != null)
                     {
-                        Console.WriteLine("Message received");
-                        if (m_clientListener != null)
-                        {
-                            m_clientListener.onClientMessage(message, tcpClient);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Message missed, no listener");
-                        }
+                        //Console.WriteLine("Message received");
+                        m_clientListener?.onClientMessage(message, tcpClient);
+                        //else
+                        //{
+                            //Console.WriteLine("Message missed, no listener");
+                        //}
                     }
                     else
                     {
-                        Console.WriteLine("No message from client, close socket.");
+                        //Console.WriteLine("No message from client, close socket.");
                         break;
                     }
                 }
             }
-            catch(InvalidOperationException e)
+            catch(InvalidOperationException)
             {
 
             }
@@ -151,16 +143,16 @@ namespace VolumeControl
                 {
                     m_clients.Remove(tcpClient);
                 }
-                tcpClient.Close();
+                //tcpClient.Close();
                 tcpClient.Dispose();
-                Console.WriteLine("Client disconnected");
+                //Console.WriteLine("Client disconnected");
             }
         }
 
         public void sendData(string data)
         {
             var finalData = data;
-            if (data != null && data.Length > 0 && data[data.Length - 1] != '\n')
+            if (!string.IsNullOrEmpty(data) && data[^1] != '\n')
             {
                 finalData += '\n';
             }
@@ -171,24 +163,24 @@ namespace VolumeControl
                 clients = m_clients.ToList();
             }
 
-            byte[] buffer = m_encoder.GetBytes(finalData);
+            var buffer = m_encoder.GetBytes(finalData);
 
             foreach (var client in clients)
             {
-                Console.WriteLine("Sending data to a client...");
+                //Console.WriteLine("Sending data to a client...");
 
                 try
                 {
-                    NetworkStream clientStream = client.GetStream();
+                    var clientStream = client.GetStream();
 
                     clientStream.Write(buffer, 0, buffer.Length);
                     clientStream.Flush();
                 }
-                catch(IOException e)
+                catch(IOException)
                 {
 
                 }
-                catch (ObjectDisposedException e)
+                catch (ObjectDisposedException)
                 {
 
                 }

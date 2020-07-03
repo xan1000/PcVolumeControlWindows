@@ -6,7 +6,7 @@ namespace VolumeControl
 {
     public class AudioSessionRemovedListener : IObserver<string>
     {
-        private App m_app;
+        private readonly App m_app;
 
         public AudioSessionRemovedListener(App app)
         {
@@ -31,7 +31,7 @@ namespace VolumeControl
 
     public class AudioSessionAddedListener : IObserver<IAudioSession>
     {
-        private App m_app;
+        private readonly App m_app;
 
         public AudioSessionAddedListener(App app)
         {
@@ -56,7 +56,7 @@ namespace VolumeControl
 
     public class DeviceChangeListener : IObserver<DeviceChangedArgs>
     {
-        private App m_app;
+        private readonly App m_app;
 
         public DeviceChangeListener(App app)
         {
@@ -99,13 +99,15 @@ namespace VolumeControl
                 case DeviceChangedType.PeakValueChanged:
                     m_app.requestUpdate();
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }
 
     public class AudioSessionVolumeListener : IObserver<SessionVolumeChangedArgs>
     {
-        private App m_app;
+        private readonly App m_app;
 
         public AudioSessionVolumeListener(App app)
         {
@@ -130,7 +132,7 @@ namespace VolumeControl
 
     public class AudioSessionMuteListener : IObserver<SessionMuteChangedArgs>
     {
-        private App m_app;
+        private readonly App m_app;
 
         public AudioSessionMuteListener(App app)
         {
@@ -155,7 +157,7 @@ namespace VolumeControl
 
     public class MasterVolumeListener : IObserver<DeviceVolumeChangedArgs>, IObserver<DeviceMuteChangedArgs>
     {
-        private App m_app;
+        private readonly App m_app;
 
         public MasterVolumeListener(App app)
         {
@@ -174,13 +176,13 @@ namespace VolumeControl
 
         public void OnNext(DeviceMuteChangedArgs value)
         {
-            Console.WriteLine("Master volume mute changed");
+            //Console.WriteLine("Master volume mute changed");
             m_app.requestUpdate();
         }
 
         public void OnNext(DeviceVolumeChangedArgs value)
         {
-            Console.WriteLine("Master volume changed");
+            //Console.WriteLine("Master volume changed");
             m_app.requestUpdate();
         }
     }

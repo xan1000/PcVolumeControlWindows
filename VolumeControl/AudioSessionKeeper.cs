@@ -3,9 +3,9 @@ using System;
 
 namespace VolumeControl
 {
-    class AudioSessionKeeper : IDisposable
+    internal class AudioSessionKeeper : IDisposable
     {
-        private string m_id;
+        private readonly string m_id;
 
         private IDisposable m_volumeSubscription;
         private IDisposable m_muteSubscription;

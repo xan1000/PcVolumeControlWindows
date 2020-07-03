@@ -2,39 +2,33 @@
 
 namespace VolumeControl
 {
-    class PcAudio
+    internal class PcAudio
     {
         public int protocolVersion;
-        public string applicationVersion;
-        public Dictionary<string,string> deviceIds = new Dictionary<string,string>();
         public AudioDevice defaultDevice;
     }
 
-    class AudioDevice
+    internal class AudioDevice
     {
-        public string deviceId;
-        public string name;
+        public readonly string deviceId;
         public float? masterVolume = null;
         public bool? masterMuted = null;
-        public List<AudioSession> sessions = new List<AudioSession>();
+        public readonly List<AudioSession> sessions = new List<AudioSession>();
 
-        public AudioDevice(string name, string deviceId)
+        public AudioDevice(string deviceId)
         {
-            this.name = name;
             this.deviceId = deviceId;
         }
     }
 
-    class AudioSession
+    internal class AudioSession
     {
-        public string name;
-        public string id;
-        public float volume;
-        public bool muted;
+        public readonly string id;
+        public readonly float volume;
+        public readonly bool muted;
 
-        public AudioSession(string name, string id, float volume, bool muted)
+        public AudioSession(string id, float volume, bool muted)
         {
-            this.name = name;
             this.id = id;
             this.volume = volume;
             this.muted = muted;
