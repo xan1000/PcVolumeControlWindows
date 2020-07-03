@@ -53,7 +53,8 @@ namespace VolumeControl
         private readonly JsonSerializerSettings m_jsonsettings = new JsonSerializerSettings
         {
             NullValueHandling = NullValueHandling.Ignore,
-            MissingMemberHandling = MissingMemberHandling.Ignore
+            MissingMemberHandling = MissingMemberHandling.Ignore,
+            Converters = new JsonConverter[] { new FloatFormatConverter() }
         };
 
         private readonly Subject<bool> m_updateSubject = new Subject<bool>();
@@ -331,6 +332,7 @@ namespace VolumeControl
                     try
                     {
                         //Console.WriteLine("client message: " + message);
+                        Debug.WriteLine(message);
                         var pcAudio = JsonConvert.DeserializeObject<PcAudio>(message, m_jsonsettings);
 
                         if(pcAudio == null)
@@ -366,7 +368,11 @@ namespace VolumeControl
 
             lock (m_lock)
             {
-                var audioState = new PcAudio { protocolVersion = PROTOCOL_VERSION };
+                var audioState = new PcAudio
+                {
+                    protocolVersion = PROTOCOL_VERSION,
+                    applicationVersion = APPLICATION_VERSION
+                };
 
                 cleanUpSessionKeepers();
 
@@ -375,6 +381,16 @@ namespace VolumeControl
                     return true;
 
                 var defaultDeviceId = defaultDevice.Id.ToString();
+
+                // Add all available audio devices to our list of device IDs
+                var devices = m_coreAudioController.GetPlaybackDevices();
+                foreach (var device in devices)
+                {
+                    if (device.State == DeviceState.Active)
+                    {
+                        audioState.deviceIds.Add(device.Id.ToString(), device.FullName);
+                    }
+                }
 
                 // Master device updates
                 if (audioUpdate?.defaultDevice != null)
@@ -425,11 +441,11 @@ namespace VolumeControl
                 }
 
                 // Create our default audio device and populate it's volume and mute status
-                var audioDevice = new AudioDevice(defaultDeviceId);
+                var audioDevice = new AudioDevice(defaultDevice.FullName, defaultDeviceId);
                 audioState.defaultDevice = audioDevice;
 
                 var defaultPlaybackDevice = m_coreAudioController.DefaultPlaybackDevice;
-                audioDevice.masterVolume = (float)defaultPlaybackDevice.Volume;
+                audioDevice.masterVolume = (float) defaultPlaybackDevice.Volume;
                 audioDevice.masterMuted = defaultPlaybackDevice.IsMuted;
 
                 // Go through all audio sessions
@@ -478,7 +494,7 @@ namespace VolumeControl
                             using var process = Process.GetProcessById(session.ProcessId);
                         }
 
-                        var audioSession = new AudioSession(session.Id, (float)session.Volume, session.IsMuted);
+                        var audioSession = new AudioSession(sessionName, session.Id, (float)session.Volume, session.IsMuted);
                         audioDevice.sessions.Add(audioSession);
                     }
                     catch (Exception)

@@ -152,7 +152,7 @@ namespace VolumeControl
         public void sendData(string data)
         {
             var finalData = data;
-            if (!string.IsNullOrEmpty(data) && data[^1] != '\n')
+            if(!string.IsNullOrEmpty(data) && data[^1] != '\n')
             {
                 finalData += '\n';
             }
@@ -163,6 +163,7 @@ namespace VolumeControl
                 clients = m_clients.ToList();
             }
 
+            //System.Diagnostics.Debug.WriteLine(finalData);
             var buffer = m_encoder.GetBytes(finalData);
 
             foreach (var client in clients)
@@ -177,13 +178,9 @@ namespace VolumeControl
                     clientStream.Flush();
                 }
                 catch(IOException)
-                {
-
-                }
+                { }
                 catch (ObjectDisposedException)
-                {
-
-                }
+                { }
             }
         }
     }
