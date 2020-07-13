@@ -166,13 +166,9 @@ namespace VolumeControl
 
             var masterVolumeListener = new MasterVolumeListener(this);
 
-            m_coreAudioController.DefaultPlaybackDevice.VolumeChanged
-                                //.Throttle(TimeSpan.FromMilliseconds(10))
-                                .Subscribe(masterVolumeListener);
+            m_coreAudioController.DefaultPlaybackDevice.VolumeChanged.Throttle(TimeSpan.FromMilliseconds(10)).Subscribe(masterVolumeListener);
 
-            m_coreAudioController.DefaultPlaybackDevice.MuteChanged
-                                //.Throttle(TimeSpan.FromMilliseconds(10))
-                                .Subscribe(masterVolumeListener);
+            m_coreAudioController.DefaultPlaybackDevice.MuteChanged.Throttle(TimeSpan.FromMilliseconds(10)).Subscribe(masterVolumeListener);
 
             new Thread(() =>
             {
@@ -428,7 +424,18 @@ namespace VolumeControl
                             // ReSharper disable once InvertIf
                             if (audioUpdate.defaultDevice.masterVolume != null)
                             {
-                                var volume = audioUpdate.defaultDevice.masterVolume ?? (float)m_coreAudioController.DefaultPlaybackDevice.Volume;
+                                const int increment = 2;
+
+                                var deviceAudio = m_coreAudioController.DefaultPlaybackDevice.Volume;
+                                var clientAudio = audioUpdate.defaultDevice.masterVolume;
+
+                                var volume = deviceAudio;
+                                if(clientAudio < deviceAudio)
+                                    volume -= increment;
+                                else if(clientAudio > deviceAudio)
+                                    volume += increment;
+
+                                //var volume = audioUpdate.defaultDevice.masterVolume ?? (float)m_coreAudioController.DefaultPlaybackDevice.Volume;
                                 //Console.WriteLine("Updating master volume: " + volume);
 
                                 m_coreAudioController.DefaultPlaybackDevice.SetVolumeAsync(volume).Wait();
